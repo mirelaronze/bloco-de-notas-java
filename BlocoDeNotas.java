@@ -8,58 +8,58 @@ public class BlocoDeNotas {
         anotacoes = new ArrayList<>();
     }
 
-    public void adicionarAnotacao(String textoAnotacao) {
+    public void adicionarAnotacao(String textoAnotacao) throws Exception {
         int numeroid = anotacoes.size();
         Anotacao nova = new Anotacao(textoAnotacao, numeroid);
         anotacoes.add(nova);
     }
 
-    public void editarAnotacao(int numeroid, String novoTexto) {
+    public void editarAnotacao(int numeroid, String novoTexto) throws Exception {
         for (Anotacao a : anotacoes) {
             if (a.getNumeroid() == numeroid && !a.isApagada()) {
                 a.setTextoAnotacao(novoTexto);
                 return;
             }
         }
-        System.out.println("Anotação não encontrada ou está apagada!");
+        throw new Exception("Anotação não encontrada ou apagada.");
     }
 
-
-    public void apagarAnotacao(int numeroid) {
+    public void apagarAnotacao(int numeroid) throws Exception {
         for (Anotacao a : anotacoes) {
-            if (a.getNumeroid() == numeroid) {
+            if (a.getNumeroid() == numeroid && !a.isApagada()) {
                 a.apagar();
                 return;
             }
         }
-        System.out.println("Anotação não encontrada!");
+        throw new Exception("Anotação não encontrada.");
     }
 
-    public ArrayList<Anotacao> buscar(String texto) {
+    public ArrayList<Anotacao> buscar(String texto) throws Exception {
+
+        if (texto == null || texto.trim().isEmpty()) {
+            throw new Exception("Texto de busca inválido!");
+        }
+
         ArrayList<Anotacao> resultados = new ArrayList<>();
-        if (texto == null) return resultados;
 
         for (Anotacao a : anotacoes) {
-            if (!a.isApagada() && a.getTextoAnotacao().toLowerCase().contains(texto.toLowerCase())) {
+            if (!a.isApagada() &&
+                a.getTextoAnotacao().toLowerCase().contains(texto.toLowerCase())) {
                 resultados.add(a);
             }
         }
+
         return resultados;
     }
 
-    public ArrayList<Anotacao> listar() {
-        ArrayList<Anotacao> lista = new ArrayList<>();
+    public void listarImprimir() throws Exception {
 
-        for (Anotacao a : anotacoes) {
-            if (!a.isApagada()) {
-                lista.add(a);
-            }
+        if (anotacoes.isEmpty()) {
+            throw new Exception("Não existem anotações cadastradas.");
         }
-        return lista;
-    }
 
-    public void listarImprimir() {
-        System.out.println("---- Lista de anotações ----");
+        System.out.println("---- Lista de Anotações ----");
+
         for (Anotacao a : anotacoes) {
             if (!a.isApagada()) {
                 System.out.println(a);
